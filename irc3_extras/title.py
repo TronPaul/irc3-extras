@@ -36,8 +36,9 @@ class TitlePlugin:
                  self.on_url(target, url)
 
     def on_url(self, dest, url):
+        handler = default_handler
         try:
-            msg = default_handler(url)
+            msg = handler(url)
             msg = format_message(msg)
             self.bot.privmsg(dest, msg)
         except Exception:
