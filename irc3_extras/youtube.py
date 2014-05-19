@@ -16,7 +16,7 @@ class YoutubeHandler:
         self.api_key = bot.config.get('irc3_extras.youtube.api_key', None)
         self.log = logging.getLogger(__name__)
 
-    @title.handler('r(youtu\.be/.+|(www\.)?youtube\.com/.+[?&]v=.*)')
+    @title.handler(r'(youtu\.be/.+|(www\.)?youtube\.com/.+[?&]v=.*)')
     def youtube(self, url):
         assert self.api_key
         o = urlparse(url)
@@ -36,7 +36,7 @@ class YoutubeHandler:
         api_url = '{api}?{qs}'.format(api=API_URL, qs=qs)
         self.log.debug('Youtube %r', api_url)
         resp = urlopen(api_url)
-        d = json.load(io.TextIOWrapper(resp))['items'][0]
+        d = json.load(io.TextIOWrapper(resp, encoding='utf8'))['items'][0]
         return {
             'YouTube': d['snippet']['title'],
             'By': d['snippet']['channelTitle'],

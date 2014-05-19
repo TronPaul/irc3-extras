@@ -1,4 +1,6 @@
 from irc3 import utils
+from urllib.parse import urlparse
+import urllib.request as request
 import functools
 import venusian
 import fnmatch
@@ -7,6 +9,7 @@ import docopt
 import irc3
 import sys
 import re
+import bs4
 
 URL_REGEX = re.compile(r'https?://\S+')
 DOMAIN_REGEX = re.compile(r'https?://(?P<domain>[^/]+)(/\S+)?')
@@ -50,7 +53,7 @@ class handler(object):
                 return self.func(*args, **kwargs)
             callback = wrapper
         plugin = bot.get_plugin(UrlHandlers)
-        plugin.handlers.append((self.regex, callback))
+        plugin.handlers.append((self.cregex, callback))
         bot.log.info('Register url %r', self.func.__name__)
 
     def __call__(self, func):
@@ -76,7 +79,7 @@ class UrlHandlers:
 
     def get_handler(self, url):
         for cregex, h in self.handlers:
-            if cregex.find(url):
+            if cregex.search(url):
                 return h
         else:
             return default_handler
@@ -92,7 +95,7 @@ class UrlHandlers:
                     try:
                         msg = f(url)
                     except Exception:
-                        self.log.exception('Error building message from url')
+                        self.log.exception('Error building message from %s', url)
                         msg = None
                     if msg:
                         msg = format_message(msg)
