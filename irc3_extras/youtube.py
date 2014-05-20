@@ -13,7 +13,8 @@ DURATION_RE = re.compile(r'^PT((?P<minutes>[0-9]+)M)?((?P<seconds>[0-9]+)S)?$')
 @irc3.plugin
 class YoutubeHandler:
     def __init__(self, bot):
-        self.api_key = bot.config.get('irc3_extras.youtube.api_key', None)
+        self.config = config = bot.config.get(__name__, {})
+        self.api_key = self.config.get('api_key', None)
         self.log = logging.getLogger(__name__)
 
     @title.handler(r'(youtu\.be/.+|(www\.)?youtube\.com/.+[?&]v=.*)')
