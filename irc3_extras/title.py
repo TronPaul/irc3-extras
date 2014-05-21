@@ -13,6 +13,7 @@ import bs4
 
 URL_REGEX = re.compile(r'https?://\S+')
 DOMAIN_REGEX = re.compile(r'https?://(?P<domain>[^/]+)(/\S+)?')
+USER_AGENT = 'Mozilla/5.0 (pls no 403erino)'
 
 def format_message(o):
     if isinstance(o, dict):
@@ -21,8 +22,9 @@ def format_message(o):
     else:
         return o
 
-def default_handler(url):
-    resp = request.urlopen(url)
+def default_handler(url, user_agent=USER_AGENT):
+    req = request.Request(url, headers={'User-Agent': user_agent})
+    resp = request.urlopen(req)
     page = bs4.BeautifulSoup(resp)
     m = re.match(DOMAIN_REGEX, url)
     if m:
