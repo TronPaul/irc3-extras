@@ -74,6 +74,7 @@ class UrlHandlers:
 
     def __init__(self, bot):
         self.bot = bot
+        self.bot.venusian_categories.append('irc3_extras.title')
         self.config = config = bot.config.get(__name__, {})
         self.log = logging.getLogger(__name__)
         self.log.debug('Config: %r', config)
