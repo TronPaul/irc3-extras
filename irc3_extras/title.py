@@ -1,6 +1,5 @@
 from irc3 import utils
-from urllib.parse import urlparse
-import urllib.request as request
+from irc3_extras import http
 import functools
 import venusian
 import fnmatch
@@ -23,8 +22,7 @@ def format_message(o):
         return o
 
 def default_handler(url, user_agent=USER_AGENT):
-    req = request.Request(url, headers={'User-Agent': user_agent})
-    resp = request.urlopen(req)
+    resp = http.get(url)
     page = bs4.BeautifulSoup(resp)
     m = re.match(DOMAIN_REGEX, url)
     if m:
@@ -70,11 +68,12 @@ class UrlHandlers:
 
     requires = [
         'irc3.plugins.core',
+        'irc3_extras.http'
     ]
 
     def __init__(self, bot):
         self.bot = bot
-        self.bot.venusian_categories.append('irc3_extras.title')
+        self.bot.venusian_categories.append(self.__module__)
         self.config = config = bot.config.get(__name__, {})
         self.log = logging.getLogger(__name__)
         self.log.debug('Config: %r', config)

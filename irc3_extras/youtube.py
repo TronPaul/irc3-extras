@@ -3,9 +3,9 @@ import re
 import io
 import irc3
 import logging
+from urllib.parse import urlparse
 from irc3_extras import title
-from urllib.parse import urlparse, urlencode
-from urllib.request import urlopen
+from irc3_extras import http
 
 API_URL = 'https://www.googleapis.com/youtube/v3/videos'
 DURATION_RE = re.compile(r'^PT((?P<minutes>[0-9]+)M)?((?P<seconds>[0-9]+)S)?$')
@@ -37,13 +37,10 @@ class YoutubeHandler:
             'key': self.api_key
         }
 
-        qs = urlencode(opts)
-        api_url = '{api}?{qs}'.format(api=API_URL, qs=qs)
-        self.log.debug('Youtube %r', api_url)
-        resp = urlopen(api_url)
-        d = json.load(io.TextIOWrapper(resp, encoding='utf8'))['items'][0]
+        self.log.debug('Youtube %r', vid)
+        d = http.get_json(API_URL, opts)['items'][0]
         return {
-            'YouTube': d['snippet']['title'],
+            'Title': d['snippet']['title'],
             'By': d['snippet']['channelTitle'],
             'Views': d['statistics']['viewCount'],
             'Duration': d['contentDetails']['duration'],
