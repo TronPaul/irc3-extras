@@ -1,18 +1,18 @@
-from irc3 import utils
-from irc3_extras import http
 import functools
-import venusian
-import fnmatch
 import logging
-import docopt
-import irc3
-import sys
 import re
+
+import venusian
+import irc3
 import bs4
+
+from irc3_extras import http
+
 
 URL_REGEX = re.compile(r'https?://\S+')
 DOMAIN_REGEX = re.compile(r'https?://(?P<domain>[^/]+)(/\S+)?')
 USER_AGENT = 'Mozilla/5.0 (pls no 403erino)'
+
 
 def format_message(o):
     if isinstance(o, dict):
@@ -21,7 +21,8 @@ def format_message(o):
     else:
         return o
 
-def default_handler(url, user_agent=USER_AGENT):
+
+def default_handler(url):
     resp = http.get(url)
     page = bs4.BeautifulSoup(resp)
     m = re.match(DOMAIN_REGEX, url)
@@ -30,6 +31,7 @@ def default_handler(url, user_agent=USER_AGENT):
     else:
         domain = url[:10]
     return {domain: page.title.text}
+
 
 class handler(object):
     venusian = venusian

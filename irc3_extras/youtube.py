@@ -1,11 +1,12 @@
-import json
 import re
-import io
-import irc3
 import logging
 from urllib.parse import urlparse
+
+import irc3
+
 from irc3_extras import title
 from irc3_extras import http
+
 
 API_URL = 'https://www.googleapis.com/youtube/v3/videos'
 DURATION_RE = re.compile(r'^PT((?P<minutes>[0-9]+)M)?((?P<seconds>[0-9]+)S)?$')
