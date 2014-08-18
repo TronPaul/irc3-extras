@@ -1,15 +1,18 @@
 import re
 import logging
+from collections import OrderedDict
 from urllib.parse import urlparse
 
 import irc3
 
 from irc3_extras import title
+
 from irc3_extras import http
 
 
 API_URL = 'https://www.googleapis.com/youtube/v3/videos'
 DURATION_RE = re.compile(r'^PT((?P<minutes>[0-9]+)M)?((?P<seconds>[0-9]+)S)?$')
+
 
 @irc3.plugin
 class YoutubeHandler:
@@ -40,11 +43,11 @@ class YoutubeHandler:
 
         self.log.debug('Youtube %r', vid)
         d = http.get_json(API_URL, opts)['items'][0]
-        return {
-            'Title': d['snippet']['title'],
-            'By': d['snippet']['channelTitle'],
-            'Views': d['statistics']['viewCount'],
-            'Duration': d['contentDetails']['duration'],
-            'Likes': d['statistics']['likeCount'],
-            'Dislikes': d['statistics']['dislikeCount']
-        }
+        return OrderedDict([
+            ('Title', d['snippet']['title']),
+            ('By', d['snippet']['channelTitle']),
+            ('Views', d['statistics']['viewCount']),
+            ('Duration', d['contentDetails']['duration']),
+            ('Likes', d['statistics']['likeCount']),
+            ('Dislikes', d['statistics']['dislikeCount'])
+        ])
